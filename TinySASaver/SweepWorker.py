@@ -326,9 +326,9 @@ class SweepWorker(QtCore.QRunnable):
         #     # We got the wrong frequencies? Let's just log it for now.
         #     logger.warning("Wrong frequency received - %d is not %d", int(frequencies[i*290]), start)
         # S11
-        values11 = self.readData("data 0")
+        values11 = self.readData("data 1")
         # S21
-        values21 = self.readData("data 0")
+        values21 = self.readData("data 2")
 
         return frequencies, values11, values21
 
