@@ -44,6 +44,8 @@ class VNA:
         tmp_vna = VNA(app, serial_port)
         tmp_vna.flushSerialBuffers()
         firmware = tmp_vna.readFirmware()
+        logger.info("Firmware: ")
+        logger.info(firmware)
         if firmware.find("TinySA-H") > 0:
             logger.info("Type: TinySA-H")
             return TinySA_H(app, serial_port)
@@ -113,7 +115,7 @@ class VNA:
                 result = ""
                 data = ""
                 sleep(0.01)
-                while data != "ch> ":
+                while (data != "ch> " and (not data.endswith("ch> "))):
                     data = self.serial.readline().decode('ascii')
                     result += data
             except serial.SerialException as exc:
@@ -136,9 +138,11 @@ class VNA:
                 result = ""
                 data = ""
                 sleep(0.01)
-                while data != "ch> ":
+                while (data != "ch> " and (not data.endswith("ch> "))):
                     data = self.serial.readline().decode('ascii')
+                    logger.debug("data: %s|<=STOPHERE", data)
                     result += data
+                    logger.debug("result: %s|<=STOPHERE", result)
             except serial.SerialException as exc:
                 logger.exception("Exception while reading " + command + ": %s", exc)
             finally:
@@ -233,6 +237,9 @@ class TinySA(VNA):
     def __init__(self, app, serial_port):
         super().__init__(app, serial_port)
         self.version = Version(self.readVersion())
+        if self.version.version_string.startswith("tinySA_v1"):
+            self.version = Version("1.0.0")
+            logger.debug("version set to 1.0.0")
 
         self.features = []
 
@@ -249,6 +256,8 @@ class TinySA(VNA):
             logger.debug("Older than 0.2.0, using old sweep command.")
             self.features.append("Original sweep method")
             self.useScan = False
+        # This hangs up the program for some firmware
+        # which does not insert CRLF before help output and "ch>" prompt
         self.features.extend(self.readFeatures())
 
     def isValid(self):
@@ -371,6 +380,7 @@ class Version:
 
     def __init__(self, version_string):
         self.version_string = version_string
+        logger.debug("version_string: \"%s\"", self.version_string)
         results = re.match(r"(.*\s+)?(\d+)\.(\d+)\.(\d+)(.*)", version_string)
         if results:
             self.major = int(results.group(2))
