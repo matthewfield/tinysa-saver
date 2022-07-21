@@ -63,6 +63,38 @@ For most users, this is already installed.
 4. Once completed run with the following command
 
         TinySASaver
+	
+	
+#### Installation and Use with virtualenv
+Virtualenv - a tool for creating isolated 
+virtual python environments
+
+The benefits of using virtualenv - absolutely isolated environment, 
+you can delete it - nothing will happen to the main system
+
+1. Install ( if not exist ) 
+```
+python -m pip install --user virtualenv
+python -m virtualenv --help
+```
+
+2. Creating Python3 virtual environment 
+```
+virtualenv tinysa
+```
+
+3. Install requirements
+```
+tinysa/bin/pip3 install -r requirements.txt
+```
+
+4. Run the code
+```
+tinysa/bin/python3 tinysa-saver.py
+```
+
+	
+	
 
 ### Linux
 #### Ubuntu 18.04 & 19.04
