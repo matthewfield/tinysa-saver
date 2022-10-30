@@ -244,7 +244,7 @@ class TinySASaver(QtWidgets.QWidget):
         self.sweepCenterInput.textEdited.connect(self.updateStartEnd)
 
         sweep_input_right_layout.addRow(QtWidgets.QLabel("Center"), self.sweepCenterInput)
-        
+
         self.sweepSpanInput = FrequencyInputWidget()
         self.sweepSpanInput.setAlignment(QtCore.Qt.AlignRight)
         self.sweepSpanInput.textEdited.connect(self.updateStartEnd)
@@ -760,7 +760,7 @@ class TinySASaver(QtWidgets.QWidget):
             for c in self.combinedCharts:
                 c.setCombinedData(self.data, self.data21)
 
-            self.sweepProgressBar.setValue(self.worker.percentage)
+            self.sweepProgressBar.setValue(int(round(self.worker.percentage)))
             self.tdr_window.updateTDR()
 
             # Find the minimum S11 VSWR:
@@ -1177,7 +1177,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
 
         self.marker_at_tip.toggled.connect(self.changeMarkerAtTip)
         self.changeMarkerAtTip()
-        
+
         color_options_box = QtWidgets.QGroupBox("Chart colors")
         color_options_layout = QtWidgets.QFormLayout(color_options_box)
 
