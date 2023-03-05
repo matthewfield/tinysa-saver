@@ -1535,7 +1535,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         if state:
             for c in self.app.subscribing_charts:
                 c.setBackgroundColor(QtGui.QColor(QtGui.QColorConstants.Black))
-                c.setForegroundColor(QtGui.QColor(QtGui,QColorConstants.LightGray))
+                c.setForegroundColor(QtGui.QColor(QtGui.QColorConstants.LightGray))
                 c.setTextColor(QtGui.QColor(QtGui.QColorConstants.White))
                 c.setSWRColor(self.vswrColor)
         else:
