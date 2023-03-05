@@ -16,7 +16,7 @@
 import logging
 import math
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 from TinySASaver.RFTools import RFTools
 from scipy import signal
@@ -391,7 +391,7 @@ class BandPassAnalysis(Analysis):
         self.lower_sixty_db_label = QtWidgets.QLabel()
         self.lower_db_per_octave_label = QtWidgets.QLabel()
         self.lower_db_per_decade_label = QtWidgets.QLabel()
-        
+
         self.upper_cutoff_label = QtWidgets.QLabel()
         self.upper_six_db_label = QtWidgets.QLabel()
         self.upper_sixty_db_label = QtWidgets.QLabel()
@@ -1045,7 +1045,7 @@ class PeakSearchAnalysis(Analysis):
     class QHLine(QtWidgets.QFrame):
         def __init__(self):
             super().__init__()
-            self.setFrameShape(QtWidgets.QFrame.HLine)
+            self.setFrameShape(QtWidgets.QFrame.Shape.HLine)
 
     def __init__(self, app):
         super().__init__(app)
@@ -1167,7 +1167,7 @@ class VSWRAnalysis(Analysis):
     class QHLine(QtWidgets.QFrame):
         def __init__(self):
             super().__init__()
-            self.setFrameShape(QtWidgets.QFrame.HLine)
+            self.setFrameShape(QtWidgets.QFrame.Shape.HLine)
 
     def __init__(self, app):
         super().__init__(app)

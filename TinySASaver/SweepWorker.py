@@ -19,8 +19,8 @@ from time import sleep
 from typing import List
 import math
 import numpy as np
-from PyQt5 import QtCore
-from PyQt5.QtCore import pyqtSlot, pyqtSignal
+from PyQt6 import QtCore
+from PyQt6.QtCore import pyqtSlot, pyqtSignal
 
 import TinySASaver
 from TinySASaver.Calibration import Calibration

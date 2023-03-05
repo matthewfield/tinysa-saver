@@ -18,7 +18,7 @@
 import logging
 import sys
 
-from PyQt5 import QtWidgets, QtCore
+from PyQt6 import QtWidgets, QtCore
 
 from .TinySASaver import TinySASaver
 from .about import debug
@@ -68,11 +68,11 @@ def main():
 
     logger.info("Startup...")
 
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+    # QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
     app = QtWidgets.QApplication(sys.argv)
     window = TinySASaver()
     window.show()
-    app.exec_()
+    app.exec()
 
 
 if __name__ == '__main__':

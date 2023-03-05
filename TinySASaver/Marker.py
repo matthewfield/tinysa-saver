@@ -17,8 +17,8 @@
 import math
 from typing import List
 
-from PyQt5 import QtGui, QtWidgets, QtCore
-from PyQt5.QtCore import pyqtSignal
+from PyQt6 import QtGui, QtWidgets, QtCore
+from PyQt6.QtCore import pyqtSignal
 
 from TinySASaver import RFTools
 from TinySASaver.Formatting import format_frequency, format_capacitance, format_inductance, format_complex_imp, \
@@ -47,7 +47,7 @@ class Marker(QtCore.QObject):
         self.frequency = RFTools.RFTools.parseFrequency(frequency)
 
         self.frequencyInput = FrequencyInput()
-        self.frequencyInput.setAlignment(QtCore.Qt.AlignRight)
+        self.frequencyInput.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.frequencyInput.textEdited.connect(self.setFrequency)
 
         ################################################################################################################
@@ -130,7 +130,7 @@ class Marker(QtCore.QObject):
         self.setColor(initialColor)
 
         line = QtWidgets.QFrame()
-        line.setFrameShape(QtWidgets.QFrame.VLine)
+        line.setFrameShape(QtWidgets.QFrame.Shape.VLine)
 
         self.left_form = QtWidgets.QFormLayout()
         self.right_form = QtWidgets.QFormLayout()
@@ -149,7 +149,7 @@ class Marker(QtCore.QObject):
         self.returnloss_label.setMinimumWidth(int(80 * scale))
         if self.coloredText:
             color_string = QtCore.QVariant(self.color)
-            color_string.convert(QtCore.QVariant.String)
+            color_string.convert(QtCore.QMetaType(10))
             self.group_box.setStyleSheet(
                 f"QGroupBox {{ color: {color_string.value()}; "
                 f"font-size: {self._size_str()}}};"
@@ -204,11 +204,11 @@ class Marker(QtCore.QObject):
         if color.isValid():
             self.color = color
             p = self.btnColorPicker.palette()
-            p.setColor(QtGui.QPalette.ButtonText, self.color)
+            p.setColor(QtGui.QPalette.ColorRole.ButtonText, self.color)
             self.btnColorPicker.setPalette(p)
         if self.coloredText:
             color_string = QtCore.QVariant(color)
-            color_string.convert(QtCore.QVariant.String)
+            color_string.convert(QtCore.QMetaType(10))
             self.group_box.setStyleSheet(
                 f"QGroupBox {{ color: {color_string.value()}; "
                 f"font-size: {self._size_str()}}};"

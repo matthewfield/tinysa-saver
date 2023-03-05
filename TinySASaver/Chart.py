@@ -20,8 +20,8 @@ import numpy as np
 import logging
 from scipy import signal
 
-from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtCore import pyqtSignal
+from PyQt6 import QtWidgets, QtGui, QtCore
+from PyQt6.QtCore import pyqtSignal
 
 from TinySASaver.RFTools import Datapoint, RFTools
 from TinySASaver.SITools import Format, Value
@@ -30,16 +30,16 @@ logger = logging.getLogger(__name__)
 
 
 class Chart(QtWidgets.QWidget):
-    sweepColor = QtCore.Qt.darkYellow
-    secondarySweepColor = QtCore.Qt.darkMagenta
-    referenceColor: QtGui.QColor = QtGui.QColor(QtCore.Qt.blue)
+    sweepColor = QtGui.QColorConstants.DarkYellow
+    secondarySweepColor = QtGui.QColorConstants.DarkMagenta
+    referenceColor: QtGui.QColor = QtGui.QColorConstants.Blue
     referenceColor.setAlpha(64)
-    secondaryReferenceColor: QtGui.QColor = QtGui.QColor(QtCore.Qt.blue)
+    secondaryReferenceColor: QtGui.QColor = QtGui.QColorConstants.Blue
     secondaryReferenceColor.setAlpha(64)
-    backgroundColor: QtGui.QColor = QtGui.QColor(QtCore.Qt.white)
-    foregroundColor: QtGui.QColor = QtGui.QColor(QtCore.Qt.lightGray)
-    textColor: QtGui.QColor = QtGui.QColor(QtCore.Qt.black)
-    swrColor: QtGui.QColor = QtGui.QColor(QtCore.Qt.red)
+    backgroundColor: QtGui.QColor = QtGui.QColorConstants.White
+    foregroundColor: QtGui.QColor = QtGui.QColorConstants.LightGray
+    textColor: QtGui.QColor = QtGui.QColorConstants.Black
+    swrColor: QtGui.QColor = QtGui.QColorConstants.Red
     swrColor.setAlpha(128)
     data: List[Datapoint] = []
     reference: List[Datapoint] = []
@@ -73,11 +73,11 @@ class Chart(QtWidgets.QWidget):
         super().__init__()
         self.name = name
 
-        self.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        self.action_save_screenshot = QtWidgets.QAction("Save image")
+        self.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.ActionsContextMenu)
+        self.action_save_screenshot = QtGui.QAction("Save image")
         self.action_save_screenshot.triggered.connect(self.saveScreenshot)
         self.addAction(self.action_save_screenshot)
-        self.action_popout = QtWidgets.QAction("Popout chart")
+        self.action_popout = QtGui.QAction("Popout chart")
         self.action_popout.triggered.connect(lambda: self.popoutRequested.emit(self))
         self.addAction(self.action_popout)
 
@@ -102,7 +102,7 @@ class Chart(QtWidgets.QWidget):
     def setBackgroundColor(self, color: QtGui.QColor):
         self.backgroundColor = color
         pal = self.palette()
-        pal.setColor(QtGui.QPalette.Background, color)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, color)
         self.setPalette(pal)
         self.update()
 
@@ -347,20 +347,20 @@ class FrequencyChart(Chart):
     def __init__(self, name):
         super().__init__(name)
 
-        self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-        mode_group = QtWidgets.QActionGroup(self)
+        self.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.DefaultContextMenu)
+        mode_group = QtGui.QActionGroup(self)
         self.menu = QtWidgets.QMenu()
 
-        self.reset = QtWidgets.QAction("Reset")
+        self.reset = QtGui.QAction("Reset")
         self.reset.triggered.connect(self.resetDisplayLimits)
         self.menu.addAction(self.reset)
 
         self.x_menu = QtWidgets.QMenu("Frequency axis")
-        self.action_automatic = QtWidgets.QAction("Automatic")
+        self.action_automatic = QtGui.QAction("Automatic")
         self.action_automatic.setCheckable(True)
         self.action_automatic.setChecked(True)
         self.action_automatic.changed.connect(lambda: self.setFixedSpan(self.action_fixed_span.isChecked()))
-        self.action_fixed_span = QtWidgets.QAction("Fixed span")
+        self.action_fixed_span = QtGui.QAction("Fixed span")
         self.action_fixed_span.setCheckable(True)
         self.action_fixed_span.changed.connect(lambda: self.setFixedSpan(self.action_fixed_span.isChecked()))
         mode_group.addAction(self.action_automatic)
@@ -369,20 +369,20 @@ class FrequencyChart(Chart):
         self.x_menu.addAction(self.action_fixed_span)
         self.x_menu.addSeparator()
 
-        self.action_set_fixed_start = QtWidgets.QAction("Start (" + Chart.shortenFrequency(self.minFrequency) + ")")
+        self.action_set_fixed_start = QtGui.QAction("Start (" + Chart.shortenFrequency(self.minFrequency) + ")")
         self.action_set_fixed_start.triggered.connect(self.setMinimumFrequency)
 
-        self.action_set_fixed_stop = QtWidgets.QAction("Stop (" + Chart.shortenFrequency(self.maxFrequency) + ")")
+        self.action_set_fixed_stop = QtGui.QAction("Stop (" + Chart.shortenFrequency(self.maxFrequency) + ")")
         self.action_set_fixed_stop.triggered.connect(self.setMaximumFrequency)
 
         self.x_menu.addAction(self.action_set_fixed_start)
         self.x_menu.addAction(self.action_set_fixed_stop)
-        
+
         self.x_menu.addSeparator()
-        frequency_mode_group = QtWidgets.QActionGroup(self.x_menu)
-        self.action_set_linear_x = QtWidgets.QAction("Linear")
+        frequency_mode_group = QtGui.QActionGroup(self.x_menu)
+        self.action_set_linear_x = QtGui.QAction("Linear")
         self.action_set_linear_x.setCheckable(True)
-        self.action_set_logarithmic_x = QtWidgets.QAction("Logarithmic")
+        self.action_set_logarithmic_x = QtGui.QAction("Logarithmic")
         self.action_set_logarithmic_x.setCheckable(True)
         frequency_mode_group.addAction(self.action_set_linear_x)
         frequency_mode_group.addAction(self.action_set_logarithmic_x)
@@ -393,24 +393,24 @@ class FrequencyChart(Chart):
         self.x_menu.addAction(self.action_set_logarithmic_x)
 
         self.y_menu = QtWidgets.QMenu("Data axis")
-        self.y_action_automatic = QtWidgets.QAction("Automatic")
+        self.y_action_automatic = QtGui.QAction("Automatic")
         self.y_action_automatic.setCheckable(True)
         self.y_action_automatic.setChecked(True)
         self.y_action_automatic.changed.connect(lambda: self.setFixedValues(self.y_action_fixed_span.isChecked()))
-        self.y_action_fixed_span = QtWidgets.QAction("Fixed span")
+        self.y_action_fixed_span = QtGui.QAction("Fixed span")
         self.y_action_fixed_span.setCheckable(True)
         self.y_action_fixed_span.changed.connect(lambda: self.setFixedValues(self.y_action_fixed_span.isChecked()))
-        mode_group = QtWidgets.QActionGroup(self)
+        mode_group = QtGui.QActionGroup(self)
         mode_group.addAction(self.y_action_automatic)
         mode_group.addAction(self.y_action_fixed_span)
         self.y_menu.addAction(self.y_action_automatic)
         self.y_menu.addAction(self.y_action_fixed_span)
         self.y_menu.addSeparator()
 
-        self.action_set_fixed_maximum = QtWidgets.QAction("Maximum (" + str(self.maxDisplayValue) + ")")
+        self.action_set_fixed_maximum = QtGui.QAction("Maximum (" + str(self.maxDisplayValue) + ")")
         self.action_set_fixed_maximum.triggered.connect(self.setMaximumValue)
 
-        self.action_set_fixed_minimum = QtWidgets.QAction("Minimum (" + str(self.minDisplayValue) + ")")
+        self.action_set_fixed_minimum = QtGui.QAction("Minimum (" + str(self.minDisplayValue) + ")")
         self.action_set_fixed_minimum.triggered.connect(self.setMinimumValue)
 
         self.y_menu.addAction(self.action_set_fixed_maximum)
@@ -420,10 +420,10 @@ class FrequencyChart(Chart):
         self.menu.addMenu(self.y_menu)
         self.menu.addSeparator()
         self.menu.addAction(self.action_save_screenshot)
-        self.action_popout = QtWidgets.QAction("Popout chart")
+        self.action_popout = QtGui.QAction("Popout chart")
         self.action_popout.triggered.connect(lambda: self.popoutRequested.emit(self))
         self.menu.addAction(self.action_popout)
-        self.setFocusPolicy(QtCore.Qt.ClickFocus)
+        self.setFocusPolicy(QtCore.Qt.FocusPolicy.ClickFocus)
 
     def contextMenuEvent(self, event):
         self.action_set_fixed_start.setText("Start (" + Chart.shortenFrequency(self.minFrequency) + ")")
@@ -860,7 +860,7 @@ class FrequencyChart(Chart):
 class SquareChart(Chart):
     def __init__(self, name):
         super().__init__(name)
-        sizepolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizepolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.MinimumExpanding)
         self.setSizePolicy(sizepolicy)
         self.chartWidth = self.width()-40
         self.chartHeight = self.height()-40
@@ -897,15 +897,15 @@ class PhaseChart(FrequencyChart):
 
         self.setMinimumSize(self.chartWidth + self.rightMargin + self.leftMargin,
                             self.chartHeight + self.topMargin + self.bottomMargin)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                                 QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                                 QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
         self.y_menu.addSeparator()
-        self.action_unwrap = QtWidgets.QAction("Unwrap")
+        self.action_unwrap = QtGui.QAction("Unwrap")
         self.action_unwrap.setCheckable(True)
         self.action_unwrap.triggered.connect(lambda: self.setUnwrap(self.action_unwrap.isChecked()))
         self.y_menu.addAction(self.action_unwrap)
@@ -1042,18 +1042,18 @@ class VSWRChart(FrequencyChart):
 
         self.setMinimumSize(self.chartWidth + self.rightMargin + self.leftMargin,
                             self.chartHeight + self.topMargin + self.bottomMargin)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                                 QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                                 QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
         self.y_menu.addSeparator()
-        self.y_log_lin_group = QtWidgets.QActionGroup(self.y_menu)
-        self.y_action_linear = QtWidgets.QAction("Linear")
+        self.y_log_lin_group = QtGui.QActionGroup(self.y_menu)
+        self.y_action_linear = QtGui.QAction("Linear")
         self.y_action_linear.setCheckable(True)
         self.y_action_linear.setChecked(True)
-        self.y_action_logarithmic = QtWidgets.QAction("Logarithmic")
+        self.y_action_logarithmic = QtGui.QAction("Logarithmic")
         self.y_action_logarithmic.setCheckable(True)
         self.y_action_linear.triggered.connect(lambda: self.setLogarithmicY(False))
         self.y_action_logarithmic.triggered.connect(lambda: self.setLogarithmicY(True))
@@ -1216,7 +1216,7 @@ class PolarChart(SquareChart):
 
         self.setMinimumSize(self.chartWidth + 40, self.chartHeight + 40)
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
@@ -1344,7 +1344,7 @@ class SmithChart(SquareChart):
 
         self.setMinimumSize(self.chartWidth + 40, self.chartHeight + 40)
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
@@ -1515,10 +1515,10 @@ class LogMagChart(FrequencyChart):
 
         self.setMinimumSize(self.chartWidth + self.rightMargin + self.leftMargin,
                             self.chartHeight + self.topMargin + self.bottomMargin)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                                 QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                                 QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
@@ -1714,10 +1714,10 @@ class SParameterChart(FrequencyChart):
 
         self.setMinimumSize(self.chartWidth + self.rightMargin + self.leftMargin,
                             self.chartHeight + self.topMargin + self.bottomMargin)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                                 QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                                 QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
@@ -1871,10 +1871,10 @@ class CombinedLogMagChart(FrequencyChart):
 
         self.setMinimumSize(self.chartWidth + self.rightMargin + self.leftMargin,
                             self.chartHeight + self.topMargin + self.bottomMargin)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                                 QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                                 QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
@@ -2136,10 +2136,10 @@ class QualityFactorChart(FrequencyChart):
 
         self.setMinimumSize(self.chartWidth + self.rightMargin + self.leftMargin,
                             self.chartHeight + self.topMargin + self.bottomMargin)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                                 QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                                 QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
@@ -2255,27 +2255,27 @@ class TDRChart(Chart):
         self.bottomMargin = 25
         self.topMargin = 20
         self.setMinimumSize(300, 300)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                                 QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                                 QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
-        self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
+        self.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.DefaultContextMenu)
         self.menu = QtWidgets.QMenu()
 
-        self.reset = QtWidgets.QAction("Reset")
+        self.reset = QtGui.QAction("Reset")
         self.reset.triggered.connect(self.resetDisplayLimits)
         self.menu.addAction(self.reset)
 
         self.x_menu = QtWidgets.QMenu("Length axis")
-        self.mode_group = QtWidgets.QActionGroup(self.x_menu)
-        self.action_automatic = QtWidgets.QAction("Automatic")
+        self.mode_group = QtGui.QActionGroup(self.x_menu)
+        self.action_automatic = QtGui.QAction("Automatic")
         self.action_automatic.setCheckable(True)
         self.action_automatic.setChecked(True)
         self.action_automatic.changed.connect(lambda: self.setFixedSpan(self.action_fixed_span.isChecked()))
-        self.action_fixed_span = QtWidgets.QAction("Fixed span")
+        self.action_fixed_span = QtGui.QAction("Fixed span")
         self.action_fixed_span.setCheckable(True)
         self.action_fixed_span.changed.connect(lambda: self.setFixedSpan(self.action_fixed_span.isChecked()))
         self.mode_group.addAction(self.action_automatic)
@@ -2284,22 +2284,22 @@ class TDRChart(Chart):
         self.x_menu.addAction(self.action_fixed_span)
         self.x_menu.addSeparator()
 
-        self.action_set_fixed_start = QtWidgets.QAction("Start (" + str(self.minDisplayLength) + ")")
+        self.action_set_fixed_start = QtGui.QAction("Start (" + str(self.minDisplayLength) + ")")
         self.action_set_fixed_start.triggered.connect(self.setMinimumLength)
 
-        self.action_set_fixed_stop = QtWidgets.QAction("Stop (" + str(self.maxDisplayLength) + ")")
+        self.action_set_fixed_stop = QtGui.QAction("Stop (" + str(self.maxDisplayLength) + ")")
         self.action_set_fixed_stop.triggered.connect(self.setMaximumLength)
 
         self.x_menu.addAction(self.action_set_fixed_start)
         self.x_menu.addAction(self.action_set_fixed_stop)
 
         self.y_menu = QtWidgets.QMenu("Impedance axis")
-        self.y_mode_group = QtWidgets.QActionGroup(self.y_menu)
-        self.y_action_automatic = QtWidgets.QAction("Automatic")
+        self.y_mode_group = QtGui.QActionGroup(self.y_menu)
+        self.y_action_automatic = QtGui.QAction("Automatic")
         self.y_action_automatic.setCheckable(True)
         self.y_action_automatic.setChecked(True)
         self.y_action_automatic.changed.connect(lambda: self.setFixedValues(self.y_action_fixed.isChecked()))
-        self.y_action_fixed = QtWidgets.QAction("Fixed")
+        self.y_action_fixed = QtGui.QAction("Fixed")
         self.y_action_fixed.setCheckable(True)
         self.y_action_fixed.changed.connect(lambda: self.setFixedValues(self.y_action_fixed.isChecked()))
         self.y_mode_group.addAction(self.y_action_automatic)
@@ -2308,10 +2308,10 @@ class TDRChart(Chart):
         self.y_menu.addAction(self.y_action_fixed)
         self.y_menu.addSeparator()
 
-        self.y_action_set_fixed_maximum = QtWidgets.QAction("Maximum (" + str(self.maxImpedance) + ")")
+        self.y_action_set_fixed_maximum = QtGui.QAction("Maximum (" + str(self.maxImpedance) + ")")
         self.y_action_set_fixed_maximum.triggered.connect(self.setMaximumImpedance)
 
-        self.y_action_set_fixed_minimum = QtWidgets.QAction("Minimum (" + str(self.minImpedance) + ")")
+        self.y_action_set_fixed_minimum = QtGui.QAction("Minimum (" + str(self.minImpedance) + ")")
         self.y_action_set_fixed_minimum.triggered.connect(self.setMinimumImpedance)
 
         self.y_menu.addAction(self.y_action_set_fixed_maximum)
@@ -2321,7 +2321,7 @@ class TDRChart(Chart):
         self.menu.addMenu(self.y_menu)
         self.menu.addSeparator()
         self.menu.addAction(self.action_save_screenshot)
-        self.action_popout = QtWidgets.QAction("Popout chart")
+        self.action_popout = QtGui.QAction("Popout chart")
         self.action_popout.triggered.connect(lambda: self.popoutRequested.emit(self))
         self.menu.addAction(self.action_popout)
 
@@ -2728,30 +2728,30 @@ class RealImaginaryChart(FrequencyChart):
 
         self.y_menu.clear()
 
-        self.y_action_automatic = QtWidgets.QAction("Automatic")
+        self.y_action_automatic = QtGui.QAction("Automatic")
         self.y_action_automatic.setCheckable(True)
         self.y_action_automatic.setChecked(True)
         self.y_action_automatic.changed.connect(lambda: self.setFixedValues(self.y_action_fixed_span.isChecked()))
-        self.y_action_fixed_span = QtWidgets.QAction("Fixed span")
+        self.y_action_fixed_span = QtGui.QAction("Fixed span")
         self.y_action_fixed_span.setCheckable(True)
         self.y_action_fixed_span.changed.connect(lambda: self.setFixedValues(self.y_action_fixed_span.isChecked()))
-        mode_group = QtWidgets.QActionGroup(self)
+        mode_group = QtGui.QActionGroup(self)
         mode_group.addAction(self.y_action_automatic)
         mode_group.addAction(self.y_action_fixed_span)
         self.y_menu.addAction(self.y_action_automatic)
         self.y_menu.addAction(self.y_action_fixed_span)
         self.y_menu.addSeparator()
 
-        self.action_set_fixed_maximum_real = QtWidgets.QAction("Maximum R (" + str(self.maxDisplayReal) + ")")
+        self.action_set_fixed_maximum_real = QtGui.QAction("Maximum R (" + str(self.maxDisplayReal) + ")")
         self.action_set_fixed_maximum_real.triggered.connect(self.setMaximumRealValue)
 
-        self.action_set_fixed_minimum_real = QtWidgets.QAction("Minimum R (" + str(self.minDisplayReal) + ")")
+        self.action_set_fixed_minimum_real = QtGui.QAction("Minimum R (" + str(self.minDisplayReal) + ")")
         self.action_set_fixed_minimum_real.triggered.connect(self.setMinimumRealValue)
 
-        self.action_set_fixed_maximum_imag = QtWidgets.QAction("Maximum jX (" + str(self.maxDisplayImag) + ")")
+        self.action_set_fixed_maximum_imag = QtGui.QAction("Maximum jX (" + str(self.maxDisplayImag) + ")")
         self.action_set_fixed_maximum_imag.triggered.connect(self.setMaximumImagValue)
 
-        self.action_set_fixed_minimum_imag = QtWidgets.QAction("Minimum jX (" + str(self.minDisplayImag) + ")")
+        self.action_set_fixed_minimum_imag = QtGui.QAction("Minimum jX (" + str(self.minDisplayImag) + ")")
         self.action_set_fixed_minimum_imag.triggered.connect(self.setMinimumImagValue)
 
         self.y_menu.addAction(self.action_set_fixed_maximum_real)
@@ -2765,10 +2765,10 @@ class RealImaginaryChart(FrequencyChart):
         #
 
         self.setMinimumSize(self.chartWidth + self.leftMargin + self.rightMargin, self.chartHeight + 40)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                                 QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                                 QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
@@ -3177,10 +3177,10 @@ class MagnitudeChart(FrequencyChart):
 
         self.setMinimumSize(self.chartWidth + self.rightMargin + self.leftMargin,
                             self.chartHeight + self.topMargin + self.bottomMargin)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                                 QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                                 QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
@@ -3315,10 +3315,10 @@ class MagnitudeZChart(FrequencyChart):
 
         self.setMinimumSize(self.chartWidth + self.rightMargin + self.leftMargin,
                             self.chartHeight + self.topMargin + self.bottomMargin)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                                 QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                                 QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
@@ -3450,17 +3450,17 @@ class PermeabilityChart(FrequencyChart):
         #
 
         self.setMinimumSize(self.chartWidth + self.leftMargin + self.rightMargin, self.chartHeight + 40)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
         self.y_menu.addSeparator()
-        self.y_log_lin_group = QtWidgets.QActionGroup(self.y_menu)
-        self.y_action_linear = QtWidgets.QAction("Linear")
+        self.y_log_lin_group = QtGui.QActionGroup(self.y_menu)
+        self.y_action_linear = QtGui.QAction("Linear")
         self.y_action_linear.setCheckable(True)
-        self.y_action_logarithmic = QtWidgets.QAction("Logarithmic")
+        self.y_action_logarithmic = QtGui.QAction("Logarithmic")
         self.y_action_logarithmic.setCheckable(True)
         self.y_action_logarithmic.setChecked(True)
         self.y_action_linear.triggered.connect(lambda: self.setLogarithmicY(False))
@@ -3785,10 +3785,10 @@ class GroupDelayChart(FrequencyChart):
 
         self.setMinimumSize(self.chartWidth + self.rightMargin + self.leftMargin,
                             self.chartHeight + self.topMargin + self.bottomMargin)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                                 QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                                 QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
@@ -4021,10 +4021,10 @@ class CapacitanceChart(FrequencyChart):
 
         self.setMinimumSize(self.chartWidth + self.rightMargin + self.leftMargin,
                             self.chartHeight + self.topMargin + self.bottomMargin)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                                 QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                                 QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 
@@ -4148,10 +4148,10 @@ class InductanceChart(FrequencyChart):
 
         self.setMinimumSize(self.chartWidth + self.rightMargin + self.leftMargin,
                             self.chartHeight + self.topMargin + self.bottomMargin)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                                 QtWidgets.QSizePolicy.MinimumExpanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                                 QtWidgets.QSizePolicy.Policy.MinimumExpanding))
         pal = QtGui.QPalette()
-        pal.setColor(QtGui.QPalette.Background, self.backgroundColor)
+        pal.setColor(QtGui.QPalette.ColorRole.Window, self.backgroundColor)
         self.setPalette(pal)
         self.setAutoFillBackground(True)
 

@@ -24,8 +24,8 @@ import numpy as np
 import scipy.signal as signal
 import serial
 import typing
-from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import QModelIndex
+from PyQt6 import QtWidgets, QtCore, QtGui
+from PyQt6.QtCore import QModelIndex
 from serial.tools import list_ports
 
 from .Hardware import VNA, InvalidVNA, Version
@@ -70,9 +70,7 @@ class TinySASaver(QtWidgets.QWidget):
         else:
             self.icon = QtGui.QIcon("icon_48x48.png")
         self.setWindowIcon(self.icon)
-        self.settings = QtCore.QSettings(QtCore.QSettings.IniFormat,
-                                         QtCore.QSettings.UserScope,
-                                         "TinySASaver", "TinySASaver")
+        self.settings = QtCore.QSettings("TinySASaver", "TinySASaver")
         print("Settings: " + self.settings.fileName())
         self.threadpool = QtCore.QThreadPool()
         self.vna: VNA = InvalidVNA()
@@ -118,8 +116,8 @@ class TinySASaver(QtWidgets.QWidget):
         window_width = self.settings.value("WindowWidth", 1350, type=int)
         window_height = self.settings.value("WindowHeight", 950, type=int)
         self.resize(window_width, window_height)
-        scrollarea.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
-        self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        scrollarea.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         widget = QtWidgets.QWidget()
         widget.setLayout(layout)
         scrollarea.setWidget(widget)
@@ -215,7 +213,7 @@ class TinySASaver(QtWidgets.QWidget):
         sweep_control_layout = QtWidgets.QFormLayout(sweep_control_box)
 
         line = QtWidgets.QFrame()
-        line.setFrameShape(QtWidgets.QFrame.VLine)
+        line.setFrameShape(QtWidgets.QFrame.Shape.VLine)
 
         sweep_input_layout = QtWidgets.QHBoxLayout()
         sweep_input_left_layout = QtWidgets.QFormLayout()
@@ -227,37 +225,37 @@ class TinySASaver(QtWidgets.QWidget):
 
         self.sweepStartInput = FrequencyInputWidget()
         self.sweepStartInput.setMinimumWidth(60)
-        self.sweepStartInput.setAlignment(QtCore.Qt.AlignRight)
+        self.sweepStartInput.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.sweepStartInput.textEdited.connect(self.updateCenterSpan)
         self.sweepStartInput.textChanged.connect(self.updateStepSize)
         sweep_input_left_layout.addRow(QtWidgets.QLabel("Start"), self.sweepStartInput)
 
         self.sweepEndInput = FrequencyInputWidget()
-        self.sweepEndInput.setAlignment(QtCore.Qt.AlignRight)
+        self.sweepEndInput.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.sweepEndInput.textEdited.connect(self.updateCenterSpan)
         self.sweepEndInput.textChanged.connect(self.updateStepSize)
         sweep_input_left_layout.addRow(QtWidgets.QLabel("Stop"), self.sweepEndInput)
 
         self.sweepCenterInput = FrequencyInputWidget()
         self.sweepCenterInput.setMinimumWidth(60)
-        self.sweepCenterInput.setAlignment(QtCore.Qt.AlignRight)
+        self.sweepCenterInput.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.sweepCenterInput.textEdited.connect(self.updateStartEnd)
 
         sweep_input_right_layout.addRow(QtWidgets.QLabel("Center"), self.sweepCenterInput)
 
         self.sweepSpanInput = FrequencyInputWidget()
-        self.sweepSpanInput.setAlignment(QtCore.Qt.AlignRight)
+        self.sweepSpanInput.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.sweepSpanInput.textEdited.connect(self.updateStartEnd)
 
         sweep_input_right_layout.addRow(QtWidgets.QLabel("Span"), self.sweepSpanInput)
 
         self.sweepCountInput = QtWidgets.QLineEdit(self.settings.value("Segments", "1"))
-        self.sweepCountInput.setAlignment(QtCore.Qt.AlignRight)
+        self.sweepCountInput.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.sweepCountInput.setFixedWidth(60)
         self.sweepCountInput.textEdited.connect(self.updateStepSize)
 
         self.sweepStepLabel = QtWidgets.QLabel("Hz/step")
-        self.sweepStepLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.sweepStepLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
 
         segment_layout = QtWidgets.QHBoxLayout()
         segment_layout.addWidget(self.sweepCountInput)
@@ -277,10 +275,11 @@ class TinySASaver(QtWidgets.QWidget):
 
         self.btnSweep = QtWidgets.QPushButton("Sweep")
         self.btnSweep.clicked.connect(self.sweep)
-        self.btnSweep.setShortcut(QtCore.Qt.Key_W | QtCore.Qt.CTRL)
+        self.btnSweepSeq = QtGui.QKeySequence(QtCore.Qt.Key.Key_W | QtCore.Qt.Modifier.CTRL)
+        self.btnSweep.setShortcut(self.btnSweepSeq)
         self.btnStopSweep = QtWidgets.QPushButton("Stop")
         self.btnStopSweep.clicked.connect(self.stopSweep)
-        self.btnStopSweep.setShortcut(QtCore.Qt.Key_Escape)
+        self.btnStopSweep.setShortcut(QtCore.Qt.Key.Key_Escape)
         self.btnStopSweep.setDisabled(True)
         btn_layout = QtWidgets.QHBoxLayout()
         btn_layout.addWidget(self.btnSweep)
@@ -323,8 +322,8 @@ class TinySASaver(QtWidgets.QWidget):
             self.showMarkerButton.setText("Hide data")
         self.showMarkerButton.clicked.connect(self.toggleMarkerFrame)
         lock_radiobutton = QtWidgets.QRadioButton("Locked")
-        lock_radiobutton.setLayoutDirection(QtCore.Qt.RightToLeft)
-        lock_radiobutton.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred)
+        lock_radiobutton.setLayoutDirection(QtCore.Qt.LayoutDirection.RightToLeft)
+        lock_radiobutton.setSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Preferred)
         hbox = QtWidgets.QHBoxLayout()
         hbox.addWidget(self.showMarkerButton)
         hbox.addWidget(lock_radiobutton)
@@ -409,8 +408,8 @@ class TinySASaver(QtWidgets.QWidget):
         #  Spacer
         ################################################################################################################
 
-        left_column.addSpacerItem(QtWidgets.QSpacerItem(1, 1, QtWidgets.QSizePolicy.Fixed,
-                                                        QtWidgets.QSizePolicy.Expanding))
+        left_column.addSpacerItem(QtWidgets.QSpacerItem(1, 1, QtWidgets.QSizePolicy.Policy.Fixed,
+                                                        QtWidgets.QSizePolicy.Policy.Expanding))
 
         ################################################################################################################
         #  Reference control
@@ -472,7 +471,7 @@ class TinySASaver(QtWidgets.QWidget):
         self.fileWindow.setWindowTitle("Files")
         self.fileWindow.setWindowIcon(self.icon)
         self.fileWindow.setMinimumWidth(200)
-        shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Escape, self.fileWindow, self.fileWindow.hide)
+        shortcut = QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self.fileWindow, self.fileWindow.hide)
         file_window_layout = QtWidgets.QVBoxLayout()
         self.fileWindow.setLayout(file_window_layout)
 
@@ -1034,7 +1033,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
 
         self.marker_window = MarkerSettingsWindow(self.app)
 
-        shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Escape, self, self.hide)
+        shortcut = QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.hide)
 
         layout = QtWidgets.QHBoxLayout()
         self.setLayout(layout)
@@ -1123,7 +1122,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.pointSizeInput.setMinimum(1)
         self.pointSizeInput.setMaximum(10)
         self.pointSizeInput.setSuffix(" px")
-        self.pointSizeInput.setAlignment(QtCore.Qt.AlignRight)
+        self.pointSizeInput.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.pointSizeInput.valueChanged.connect(self.changePointSize)
         display_options_layout.addRow("Point size", self.pointSizeInput)
 
@@ -1134,7 +1133,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.lineThicknessInput.setMinimum(1)
         self.lineThicknessInput.setMaximum(10)
         self.lineThicknessInput.setSuffix(" px")
-        self.lineThicknessInput.setAlignment(QtCore.Qt.AlignRight)
+        self.lineThicknessInput.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.lineThicknessInput.valueChanged.connect(self.changeLineThickness)
         display_options_layout.addRow("Line thickness", self.lineThicknessInput)
 
@@ -1146,7 +1145,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.markerSizeInput.setMaximum(20)
         self.markerSizeInput.setSingleStep(2)
         self.markerSizeInput.setSuffix(" px")
-        self.markerSizeInput.setAlignment(QtCore.Qt.AlignRight)
+        self.markerSizeInput.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.markerSizeInput.valueChanged.connect(self.changeMarkerSize)
         self.markerSizeInput.editingFinished.connect(self.validateMarkerSize)
         display_options_layout.addRow("Marker size", self.markerSizeInput)
@@ -1421,23 +1420,23 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.changeCustomColors()  # Update all the colours of all the charts
 
         p = self.btn_background_picker.palette()
-        p.setColor(QtGui.QPalette.ButtonText, self.backgroundColor)
+        p.setColor(QtGui.QPalette.ColorRole.ButtonText, self.backgroundColor)
         self.btn_background_picker.setPalette(p)
 
         p = self.btn_foreground_picker.palette()
-        p.setColor(QtGui.QPalette.ButtonText, self.foregroundColor)
+        p.setColor(QtGui.QPalette.ColorRole.ButtonText, self.foregroundColor)
         self.btn_foreground_picker.setPalette(p)
 
         p = self.btn_text_picker.palette()
-        p.setColor(QtGui.QPalette.ButtonText, self.textColor)
+        p.setColor(QtGui.QPalette.ColorRole.ButtonText, self.textColor)
         self.btn_text_picker.setPalette(p)
 
         p = self.btn_bands_picker.palette()
-        p.setColor(QtGui.QPalette.ButtonText, self.bandsColor)
+        p.setColor(QtGui.QPalette.ColorRole.ButtonText, self.bandsColor)
         self.btn_bands_picker.setPalette(p)
 
         p = self.btn_vswr_picker.palette()
-        p.setColor(QtGui.QPalette.ButtonText, self.vswrColor)
+        p.setColor(QtGui.QPalette.ColorRole.ButtonText, self.vswrColor)
         self.btn_vswr_picker.setPalette(p)
 
         left_layout.addWidget(display_options_box)
@@ -1535,15 +1534,15 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.app.settings.setValue("DarkMode", state)
         if state:
             for c in self.app.subscribing_charts:
-                c.setBackgroundColor(QtGui.QColor(QtCore.Qt.black))
-                c.setForegroundColor(QtGui.QColor(QtCore.Qt.lightGray))
-                c.setTextColor(QtGui.QColor(QtCore.Qt.white))
+                c.setBackgroundColor(QtGui.QColor(QtGui.QColorConstants.Black))
+                c.setForegroundColor(QtGui.QColor(QtGui,QColorConstants.LightGray))
+                c.setTextColor(QtGui.QColor(QtGui.QColorConstants.White))
                 c.setSWRColor(self.vswrColor)
         else:
             for c in self.app.subscribing_charts:
-                c.setBackgroundColor(QtGui.QColor(QtCore.Qt.white))
-                c.setForegroundColor(QtGui.QColor(QtCore.Qt.lightGray))
-                c.setTextColor(QtGui.QColor(QtCore.Qt.black))
+                c.setBackgroundColor(QtGui.QColor(QtGui.QColorConstants.White))
+                c.setForegroundColor(QtGui.QColor(QtGui.QColorConstants.LightGray))
+                c.setTextColor(QtGui.QColor(QtGui.QColorConstants.Black))
                 c.setSWRColor(self.vswrColor)
 
     def changeCustomColors(self):
@@ -1569,32 +1568,32 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
     def setColor(self, name: str, color: QtGui.QColor):
         if name == "background":
             p = self.btn_background_picker.palette()
-            p.setColor(QtGui.QPalette.ButtonText, color)
+            p.setColor(QtGui.QPalette.ColorRole.ButtonText, color)
             self.btn_background_picker.setPalette(p)
             self.backgroundColor = color
             self.app.settings.setValue("BackgroundColor", color)
         elif name == "foreground":
             p = self.btn_foreground_picker.palette()
-            p.setColor(QtGui.QPalette.ButtonText, color)
+            p.setColor(QtGui.QPalette.ColorRole.ButtonText, color)
             self.btn_foreground_picker.setPalette(p)
             self.foregroundColor = color
             self.app.settings.setValue("ForegroundColor", color)
         elif name == "text":
             p = self.btn_text_picker.palette()
-            p.setColor(QtGui.QPalette.ButtonText, color)
+            p.setColor(QtGui.QPalette.ColorRole.ButtonText, color)
             self.btn_text_picker.setPalette(p)
             self.textColor = color
             self.app.settings.setValue("TextColor", color)
         elif name == "bands":
             p = self.btn_bands_picker.palette()
-            p.setColor(QtGui.QPalette.ButtonText, color)
+            p.setColor(QtGui.QPalette.ColorRole.ButtonText, color)
             self.btn_bands_picker.setPalette(p)
             self.bandsColor = color
             self.app.settings.setValue("BandsColor", color)
             self.app.bands.setColor(color)
         elif name == "vswr":
             p = self.btn_vswr_picker.palette()
-            p.setColor(QtGui.QPalette.ButtonText, color)
+            p.setColor(QtGui.QPalette.ColorRole.ButtonText, color)
             self.btn_vswr_picker.setPalette(p)
             self.vswrColor = color
             self.app.settings.setValue("VSWRColor", color)
@@ -1604,7 +1603,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         if color.isValid():
             self.sweepColor = color
             p = self.btnColorPicker.palette()
-            p.setColor(QtGui.QPalette.ButtonText, color)
+            p.setColor(QtGui.QPalette.ColorRole.ButtonText, color)
             self.btnColorPicker.setPalette(p)
             self.app.settings.setValue("SweepColor", color)
             self.app.settings.sync()
@@ -1615,7 +1614,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         if color.isValid():
             self.secondarySweepColor = color
             p = self.btnSecondaryColorPicker.palette()
-            p.setColor(QtGui.QPalette.ButtonText, color)
+            p.setColor(QtGui.QPalette.ColorRole.ButtonText, color)
             self.btnSecondaryColorPicker.setPalette(p)
             self.app.settings.setValue("SecondarySweepColor", color)
             self.app.settings.sync()
@@ -1626,7 +1625,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         if color.isValid():
             self.referenceColor = color
             p = self.btnReferenceColorPicker.palette()
-            p.setColor(QtGui.QPalette.ButtonText, color)
+            p.setColor(QtGui.QPalette.ColorRole.ButtonText, color)
             self.btnReferenceColorPicker.setPalette(p)
             self.app.settings.setValue("ReferenceColor", color)
             self.app.settings.sync()
@@ -1638,7 +1637,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         if color.isValid():
             self.secondaryReferenceColor = color
             p = self.btnSecondaryReferenceColorPicker.palette()
-            p.setColor(QtGui.QPalette.ButtonText, color)
+            p.setColor(QtGui.QPalette.ColorRole.ButtonText, color)
             self.btnSecondaryReferenceColorPicker.setPalette(p)
             self.app.settings.setValue("SecondaryReferenceColor", color)
             self.app.settings.sync()
@@ -1747,9 +1746,9 @@ class AboutWindow(QtWidgets.QWidget):
         self.setLayout(top_layout)
         #self.setAutoFillBackground(True)
         pal = self.palette()
-        pal.setColor(QtGui.QPalette.Background, QtGui.QColor("white"))
+        pal.setColor(QtGui.QPalette.ColorRole.Window, QtGui.QColor("white"))
         self.setPalette(pal)
-        shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Escape, self, self.hide)
+        shortcut = QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.hide)
 
         icon_layout = QtWidgets.QVBoxLayout()
         top_layout.addLayout(icon_layout)
@@ -1832,11 +1831,11 @@ class AboutWindow(QtWidgets.QWidget):
         logger.debug("Asking about automatic update checks")
         selection = QtWidgets.QMessageBox.question(self.app, "Enable checking for updates?",
                                                    "Would you like TinySA-Saver to check for updates automatically?")
-        if selection == QtWidgets.QMessageBox.Yes:
+        if selection == QtWidgets.QMessageBox.StandardButton.Yes:
             self.updateCheckBox.setChecked(True)
             self.app.settings.setValue("CheckForUpdates", "Yes")
             self.findUpdates()
-        elif selection == QtWidgets.QMessageBox.No:
+        elif selection == QtWidgets.QMessageBox.StandardButton.No:
             self.updateCheckBox.setChecked(False)
             self.app.settings.setValue("CheckForUpdates", "No")
             QtWidgets.QMessageBox.information(self.app, "Checking for updates disabled",
@@ -1908,7 +1907,7 @@ class TDRWindow(QtWidgets.QWidget):
         self.setWindowTitle("TDR")
         self.setWindowIcon(self.app.icon)
 
-        shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Escape, self, self.hide)
+        shortcut = QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.hide)
 
         layout = QtWidgets.QFormLayout()
         self.setLayout(layout)
@@ -1992,7 +1991,7 @@ class TDRWindow(QtWidgets.QWidget):
 
         s11 = []
         for d in self.app.data:
-            s11.append(np.complex(d.re, d.im))
+            s11.append(complex(d.re, d.im))
 
         window = np.blackman(len(self.app.data))
 
@@ -2025,7 +2024,7 @@ class SweepSettingsWindow(QtWidgets.QWidget):
         self.setWindowTitle("Sweep settings")
         self.setWindowIcon(self.app.icon)
 
-        shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Escape, self, self.hide)
+        shortcut = QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.hide)
 
         layout = QtWidgets.QVBoxLayout()
         self.setLayout(layout)
@@ -2172,7 +2171,7 @@ class BandsWindow(QtWidgets.QWidget):
         self.setWindowTitle("Manage bands")
         self.setWindowIcon(self.app.icon)
 
-        shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Escape, self, self.hide)
+        shortcut = QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.hide)
 
         layout = QtWidgets.QVBoxLayout()
         self.setLayout(layout)
@@ -2237,10 +2236,8 @@ class BandsModel(QtCore.QAbstractTableModel):
 
     def __init__(self):
         super().__init__()
-        self.settings = QtCore.QSettings(QtCore.QSettings.IniFormat,
-                                         QtCore.QSettings.UserScope,
-                                         "TinySASaver", "Bands")
-        self.settings.setIniCodec("UTF-8")
+        self.settings = QtCore.QSettings("TinySASaver", "Bands")
+        # self.settings.setIniCodec("UTF-8")
         self.enabled = self.settings.value("ShowBands", False, bool)
 
         stored_bands: List[str] = self.settings.value("bands", self.default_bands)
@@ -2271,18 +2268,18 @@ class BandsModel(QtCore.QAbstractTableModel):
         return len(self.bands)
 
     def data(self, index: QModelIndex, role: int = ...) -> QtCore.QVariant:
-        if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.ItemDataRole or role == QtCore.Qt.EditRole:
+        if role == QtCore.Qt.ItemDataRole.DisplayRole or role == QtCore.Qt.ItemDataRole or role == QtCore.Qt.ItemDataRole.EditRole:
             return QtCore.QVariant(self.bands[index.row()][index.column()])
-        elif role == QtCore.Qt.TextAlignmentRole:
+        elif role == QtCore.Qt.ItemDataRole.TextAlignmentRole:
             if index.column() == 0:
-                return QtCore.QVariant(QtCore.Qt.AlignCenter)
+                return QtCore.QVariant(QtCore.Qt.AlignmentFlag.AlignCenter)
             else:
-                return QtCore.QVariant(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+                return QtCore.QVariant(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         else:
             return QtCore.QVariant()
 
     def setData(self, index: QModelIndex, value: typing.Any, role: int = ...) -> bool:
-        if role == QtCore.Qt.EditRole and index.isValid():
+        if role == QtCore.Qt.ItemDataRole.EditRole and index.isValid():
             t = self.bands[index.row()]
             name = t[0]
             start = t[1]
@@ -2314,7 +2311,7 @@ class BandsModel(QtCore.QAbstractTableModel):
         return True
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...):
-        if role == QtCore.Qt.DisplayRole and orientation == QtCore.Qt.Horizontal:
+        if role == QtCore.Qt.ItemDataRole.DisplayRole and orientation == QtCore.Qt.Orientation.Horizontal:
             if section == 0:
                 return "Band"
             if section == 1:
@@ -2326,9 +2323,9 @@ class BandsModel(QtCore.QAbstractTableModel):
         else:
             super().headerData(section, orientation, role)
 
-    def flags(self, index: QModelIndex) -> QtCore.Qt.ItemFlags:
+    def flags(self, index: QModelIndex) -> QtCore.Qt.ItemFlag:
         if index.isValid():
-            return QtCore.Qt.ItemFlags(QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
+            return QtCore.Qt.ItemFlag(QtCore.Qt.ItemFlag.ItemIsEditable | QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable)
         else:
             super().flags(index)
 
@@ -2347,7 +2344,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.setWindowTitle("Sweep analysis")
         self.setWindowIcon(self.app.icon)
 
-        shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Escape, self, self.hide)
+        shortcut = QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.hide)
 
         layout = QtWidgets.QVBoxLayout()
         self.setLayout(layout)
@@ -2374,7 +2371,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         select_analysis_layout.addRow(self.checkbox_run_automatically)
 
         analysis_box = QtWidgets.QGroupBox("Analysis")
-        analysis_box.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        analysis_box.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
 
         self.analysis_layout = QtWidgets.QVBoxLayout(analysis_box)
         self.analysis_layout.setContentsMargins(0, 0, 0, 0)
@@ -2461,7 +2458,7 @@ class MarkerSettingsWindow(QtWidgets.QWidget):
         self.setWindowTitle("Marker settings")
         self.setWindowIcon(self.app.icon)
 
-        shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Escape, self, self.cancelButtonClick)
+        shortcut = QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.cancelButtonClick)
 
         if len(self.app.markers) > 0:
             color = self.app.markers[0].color
@@ -2498,7 +2495,7 @@ class MarkerSettingsWindow(QtWidgets.QWidget):
             item.setCheckable(True)
             item.setEditable(False)
             if field in self.currentFieldSelection:
-                item.setCheckState(QtCore.Qt.Checked)
+                item.setCheckState(QtCore.Qt.CheckState.Checked)
             self.model.appendRow(item)
         self.fieldSelectionView.setModel(self.model)
 
@@ -2597,7 +2594,7 @@ class DeviceSettingsWindow(QtWidgets.QWidget):
         self.setWindowTitle("Device settings")
         self.setWindowIcon(self.app.icon)
 
-        shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Escape, self, self.hide)
+        shortcut = QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.hide)
 
         layout = QtWidgets.QVBoxLayout()
         self.setLayout(layout)
@@ -2689,18 +2686,18 @@ class ScreenshotWindow(QtWidgets.QLabel):
         self.setWindowTitle("Screenshot")
         # TODO : self.setWindowIcon(self.app.icon)
 
-        shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Escape, self, self.hide)
-        self.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+        shortcut = QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.hide)
+        self.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.ActionsContextMenu)
 
-        self.action_original_size = QtWidgets.QAction("Original size")
+        self.action_original_size = QtGui.QAction("Original size")
         self.action_original_size.triggered.connect(lambda: self.setScale(1))
-        self.action_2x_size = QtWidgets.QAction("2x size")
+        self.action_2x_size = QtGui.QAction("2x size")
         self.action_2x_size.triggered.connect(lambda: self.setScale(2))
-        self.action_3x_size = QtWidgets.QAction("3x size")
+        self.action_3x_size = QtGui.QAction("3x size")
         self.action_3x_size.triggered.connect(lambda: self.setScale(3))
-        self.action_4x_size = QtWidgets.QAction("4x size")
+        self.action_4x_size = QtGui.QAction("4x size")
         self.action_4x_size.triggered.connect(lambda: self.setScale(4))
-        self.action_5x_size = QtWidgets.QAction("5x size")
+        self.action_5x_size = QtGui.QAction("5x size")
         self.action_5x_size.triggered.connect(lambda: self.setScale(5))
 
         self.addAction(self.action_original_size)
@@ -2708,7 +2705,7 @@ class ScreenshotWindow(QtWidgets.QLabel):
         self.addAction(self.action_3x_size)
         self.addAction(self.action_4x_size)
         self.addAction(self.action_5x_size)
-        self.action_save_screenshot = QtWidgets.QAction("Save image")
+        self.action_save_screenshot = QtGui.QAction("Save image")
         self.action_save_screenshot.triggered.connect(self.saveScreenshot)
         self.addAction(self.action_save_screenshot)
 
