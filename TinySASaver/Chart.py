@@ -208,18 +208,18 @@ class Chart(QtWidgets.QWidget):
             return str(round(frequency / 1000000, 1)) + "M"
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
-        if event.buttons() == QtCore.Qt.RightButton:
+        if event.buttons() == QtCore.Qt.MouseButton.RightButton:
             event.ignore()
             return
-        elif event.buttons() == QtCore.Qt.MiddleButton:
+        elif event.buttons() == QtCore.Qt.MouseButton.MiddleButton:
             # Drag event
             event.accept()
             self.moveStartX = event.x()
             self.moveStartY = event.y()
             return
-        if event.modifiers() == QtCore.Qt.ShiftModifier:
+        if event.modifiers() == QtCore.Qt.Modifier.SHIFT:
             self.draggedMarker = self.getNearestMarker(event.x(), event.y())
-        elif event.modifiers() == QtCore.Qt.ControlModifier:
+        elif event.modifiers() == QtCore.Qt.Modifier.CTRL:
             event.accept()
             self.draggedBox = True
             self.draggedBoxStart = (event.x(), event.y())
@@ -441,7 +441,7 @@ class FrequencyChart(Chart):
         else:
             self.y_action_automatic.setChecked(True)
 
-        self.menu.exec_(event.globalPos())
+        self.menu.exec(event.globalPos())
 
     def setFixedSpan(self, fixed_span: bool):
         self.fixedSpan = fixed_span
@@ -568,9 +568,9 @@ class FrequencyChart(Chart):
             a0.ignore()
             return
         do_zoom_x = do_zoom_y = True
-        if a0.modifiers() == QtCore.Qt.ShiftModifier:
+        if a0.modifiers() == QtCore.Qt.Modifier.SHIFT:
             do_zoom_x = False
-        if a0.modifiers() == QtCore.Qt.ControlModifier:
+        if a0.modifiers() == QtCore.Qt.Modifier.CTRL:
             do_zoom_y = False
         if a0.angleDelta().y() > 0:
             # Zoom in
@@ -586,8 +586,8 @@ class FrequencyChart(Chart):
                 zoomy = rate * self.chartHeight / 10
             else:
                 zoomy = 0
-            absx = max(0, a0.x() - self.leftMargin)
-            absy = max(0, a0.y() - self.topMargin)
+            absx = max(0, a0.angleDelta().x() - self.leftMargin)
+            absy = max(0, a0.angleDelta().y() - self.topMargin)
             ratiox = absx/self.chartWidth
             ratioy = absy/self.chartHeight
             p1x = int(self.leftMargin + ratiox * zoomx)
@@ -609,8 +609,8 @@ class FrequencyChart(Chart):
                 zoomy = rate * self.chartHeight / 9
             else:
                 zoomy = 0
-            absx = max(0, a0.x() - self.leftMargin)
-            absy = max(0, a0.y() - self.topMargin)
+            absx = max(0, a0.angleDelta().x() - self.leftMargin)
+            absy = max(0, a0.angleDelta().y() - self.topMargin)
             ratiox = absx/self.chartWidth
             ratioy = absy/self.chartHeight
             p1x = int(self.leftMargin - ratiox * zoomx)

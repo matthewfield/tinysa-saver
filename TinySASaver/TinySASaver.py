@@ -1077,7 +1077,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
                                                   type=QtGui.QColor)
         self.setSweepColor(self.sweepColor)
         self.btnColorPicker.clicked.connect(lambda: self.setSweepColor(
-                 QtWidgets.QColorDialog.getColor(self.sweepColor, options=QtWidgets.QColorDialog.ShowAlphaChannel)))
+                 QtWidgets.QColorDialog.getColor(self.sweepColor, options=QtWidgets.QColorDialog.ColorDialogOption.ShowAlphaChannel)))
 
         display_options_layout.addRow("Sweep color", self.btnColorPicker)
 
@@ -1089,7 +1089,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.setSecondarySweepColor(self.secondarySweepColor)
         self.btnSecondaryColorPicker.clicked.connect(lambda: self.setSecondarySweepColor(
                  QtWidgets.QColorDialog.getColor(self.secondarySweepColor,
-                                                 options=QtWidgets.QColorDialog.ShowAlphaChannel)))
+                                                 options=QtWidgets.QColorDialog.ColorDialogOption.ShowAlphaChannel)))
 
         display_options_layout.addRow("Second sweep color", self.btnSecondaryColorPicker)
 
@@ -1099,7 +1099,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
                                                       type=QtGui.QColor)
         self.setReferenceColor(self.referenceColor)
         self.btnReferenceColorPicker.clicked.connect(lambda: self.setReferenceColor(
-            QtWidgets.QColorDialog.getColor(self.referenceColor, options=QtWidgets.QColorDialog.ShowAlphaChannel)))
+            QtWidgets.QColorDialog.getColor(self.referenceColor, options=QtWidgets.QColorDialog.ColorDialogOption.ShowAlphaChannel)))
 
         display_options_layout.addRow("Reference color", self.btnReferenceColorPicker)
 
@@ -1111,7 +1111,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.setSecondaryReferenceColor(self.secondaryReferenceColor)
         self.btnSecondaryReferenceColorPicker.clicked.connect(lambda: self.setSecondaryReferenceColor(
             QtWidgets.QColorDialog.getColor(self.secondaryReferenceColor,
-                                            options=QtWidgets.QColorDialog.ShowAlphaChannel)))
+                                            options=QtWidgets.QColorDialog.ColorDialogOption.ShowAlphaChannel)))
 
         display_options_layout.addRow("Second reference color", self.btnSecondaryReferenceColorPicker)
 
@@ -1236,7 +1236,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.btn_bands_picker.setFixedWidth(20)
         self.btn_bands_picker.clicked.connect(lambda: self.setColor("bands",
                                               QtWidgets.QColorDialog.getColor(self.bandsColor,
-                                                                      options=QtWidgets.QColorDialog.ShowAlphaChannel)))
+                                                                      options=QtWidgets.QColorDialog.ColorDialogOption.ShowAlphaChannel)))
 
         bands_layout.addRow("Chart bands", self.btn_bands_picker)
 
@@ -1263,7 +1263,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.btn_vswr_picker.setFixedWidth(20)
         self.btn_vswr_picker.clicked.connect(lambda: self.setColor("vswr",
                                              QtWidgets.QColorDialog.getColor(self.vswrColor,
-                                                                      options=QtWidgets.QColorDialog.ShowAlphaChannel)))
+                                                                      options=QtWidgets.QColorDialog.ColorDialogOption.ShowAlphaChannel)))
 
         vswr_marker_layout.addRow("VSWR Markers", self.btn_vswr_picker)
 

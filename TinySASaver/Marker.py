@@ -110,7 +110,7 @@ class Marker(QtCore.QObject):
         self.btnColorPicker.setFixedWidth(20)
         self.btnColorPicker.clicked.connect(
             lambda: self.setColor(QtWidgets.QColorDialog.getColor(
-                self.color, options=QtWidgets.QColorDialog.ShowAlphaChannel))
+                self.color, options=QtWidgets.QColorDialog.ColorDialogOption.ShowAlphaChannel))
         )
         self.isMouseControlledRadioButton = QtWidgets.QRadioButton()
 
