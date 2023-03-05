@@ -1,10 +1,4 @@
-[![Latest Release](https://img.shields.io/github/v/release/erikkaashoek/tinysa-saver.svg)](https://github.com/erikkaashoek/tinysa-saver/releases/latest)
-[![License](https://img.shields.io/github/license/erikkaashoek/tinysa-saver.svg)](https://github.com/erikkaashoek/tinysa-saver/blob/master/LICENSE)
-[![Downloads](https://img.shields.io/github/downloads/erikkaashoek/tinysa-saver/total.svg)](https://github.com/erikkaashoek/tinysa-saver/releases/)
-[![GitHub Releases](https://img.shields.io/github/downloads/erikkaashoek/tinysa-saver/latest/total)](https://github.com/erikkaashoek/tinysa-saver/releases/latest)
-[![Donate](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=T8KTGVDQF5K6E&item_name=TinySASaver+Development&currency_code=EUR&source=url)
-
-Attention!!!! This is tinySA-saver derived from TinySASaver
+This is a PyQt6 fork of Erik Kaashoek's tinysa-saver for TinySA. It is pretty much impossible to get PyQt5 to install alongside any of the newer versions of Python, so I gave up and ported to PyQt6 instead. This works with Python 3.11
 
 
 TinySASaver
@@ -12,7 +6,7 @@ TinySASaver
 A multiplatform tool to save scans from the TinySA, sweep frequency spans in segments to gain more than
 290 data points, and generally display and analyze the resulting data.
 
-Copyright 2019 Rune B. Broberg, 2020 Erik Kaashoek
+Copyright 2019 Rune B. Broberg, 2020 Erik Kaashoek, 2023 Matthew Field
 
 ## Introduction
 This software connects to a TinySA and extracts the data for display on a computer, and for saving to Touchstone files.
@@ -38,22 +32,13 @@ Current features:
 
 ## Running the application
 
-### Windows
-
-The software was written in Python on Windows, using Pycharm, and the modules PyQT5, numpy, scipy and pyserial.
-
-#### Binary releases
-You can find the latest binary (.exe) release for Windows at https://github.com/erikkaashoek/tinysa-saver/releases/latest
-
-The downloadable executable runs directly, and requires no installation. For Windows 7, it does require Service Pack 1
-and [Microsoft VC++ Redistributable](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads).
-For most users, this is already installed.
+Python 3.11 with modules PyQT6, numpy, scipy and pyserial.
 
 #### Installation and Use with pip
 
 1. Clone repo and cd into the directory
 
-        git clone https://github.com/erikkaashoek/tinysa-saver
+        git clone https://github.com/matthewfield/tinysa-saver
         cd tinysa-saver
 
 3. Run the pip installation
@@ -99,24 +84,24 @@ tinysa/bin/python3 tinysa-saver.py
 ### Linux
 #### Ubuntu 18.04 & 19.04
 ##### Installation and Use with pip
-1. Install python3.7 and pip
+1. Install python3.11 and pip
 
         sudo apt install python3.7 python3-pip
 
 3. Clone repo and cd into the directory 
 		
-        git clone https://github.com/erikkaashoek/tinysa-saver
+        git clone https://github.com/matthewfield/tinysa-saver
         cd tinysa-saver
 
 4. Run the pip installation
 
-        python3.7 -m pip install .
+        python3.11 -m pip install .
     
     (You may need to install the additional packages python3-distutils, python3-setuptools and python3-wheel for this command to work on some distributions.)
     
 5. Once completed run with the following command
 
-        python3.7 tinysa-saver.py
+        python3.11 tinysa-saver.py
     
     
 ### Mac OS:
@@ -132,7 +117,7 @@ tinysa/bin/python3 tinysa-saver.py
 
 3. TinySASaver Installation
 
-        git clone https://github.com/erikkaashoek/tinysa-saver
+        git clone https://github.com/matthewfield/tinysa-saver
         cd tinysa-saver
         
 4. Install local pip packages
@@ -195,26 +180,4 @@ This software is licensed under version 3 of the GNU General Public License. It 
 You can use it, commercially as well. You may make changes to the code, but I (and the license) ask that you give these
 changes back to the community.
 
-## Links
-* Ohan Smit wrote an introduction to using the application: [https://zs1sci.com/blog/tinysasaver/]
-* HexAndFlex wrote a 3-part (thus far) series on Getting Started with the TinySA:
-[https://hexandflex.com/2019/08/31/getting-started-with-the-tinysa-part-1/] - Part 3 is dedicated to TinySASaver:
-[https://hexandflex.com/2019/09/15/getting-started-with-the-tinysa-part-3-pc-software/]
-
-## Credits
-Original application by Rune B. Broberg (5Q5R)
-
-Contributions and changes by Holger Müller, David Hunt and others.
-
-TDR inspiration shamelessly stolen from the work of Salil (VU2CWA) at https://nuclearrambo.com/wordpress/accurately-measuring-cable-length-with-tinysa/
-
-TDR cable types by Larry Goga.
-
-Bugfixes and Python installation work by Ohan Smit.
-
-Thanks to everyone who have tested, commented and inspired.  Particular thanks go to the alpha testing crew who suffer
-the early instability of new versions.
-
-This software is available free of charge. If you read all this way, and you *still* want to support it, you may donate to the developer using the button below:
-
-[![Paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=T8KTGVDQF5K6E&item_name=TinySASaver+Development&currency_code=EUR&source=url)
+See https://github.com/erikkaashoek/tinysa-saver for other documentation
