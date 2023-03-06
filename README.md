@@ -1,4 +1,4 @@
-This is a PyQt6 fork of Erik Kaashoek's tinysa-saver for TinySA. It is pretty much impossible to get PyQt5 to install on an M1 Mac alongside any of the newer versions of Python, so I gave up and ported to PyQt6 instead. This works with Python 3.11
+This is a PyQt6 fork of Erik Kaashoek's tinysa-saver for TinySA. It is pretty much impossible to get PyQt5 to install on an M1 Mac alongside any of the newer versions of Python, so I gave up and am porting to PyQt6 instead. This works with Python 3.11 and is mostly functional aside from some palette issues.
 
 
 TinySASaver
